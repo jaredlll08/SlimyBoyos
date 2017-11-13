@@ -1,0 +1,16 @@
+[
+{
+  "modid": "slimyboyos",
+  "name": "SlimyBoyos",
+  "description": "Makes slimes pickup items.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Jared"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
