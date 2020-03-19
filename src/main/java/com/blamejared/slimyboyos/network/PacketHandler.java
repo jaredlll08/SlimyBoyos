@@ -1,14 +1,24 @@
 package com.blamejared.slimyboyos.network;
 
-import com.blamejared.slimyboyos.reference.Reference;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.*;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class PacketHandler {
-    public static SimpleNetworkWrapper INSTANCE = new SimpleNetworkWrapper(Reference.MODID);
-    public static int ID = 0;
     
-    public static void preInit() {
-        INSTANCE.registerMessage(MessageEntitySync.class, MessageEntitySync.class, ID++, Side.CLIENT);
+    public static SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation("slimyboyos:main"), () -> "2.0.0", "2.0.0"::equals, "2.0.0"::equals);
+    
+    private static int ID = 0;
+    
+    public static void init() {
+        CHANNEL.registerMessage(ID++, MessageItemSync.class, (messageItemSync, packetBuffer) -> {
+            packetBuffer.writeItemStack(messageItemSync.stack);
+            packetBuffer.writeInt(messageItemSync.entityId);
+        }, packetBuffer -> new MessageItemSync(packetBuffer.readItemStack(), packetBuffer.readInt()), (messageItemSync, contextSupplier) -> contextSupplier.get().enqueueWork(() -> {
+            Minecraft.getInstance().world.getEntityByID(messageItemSync.entityId).getPersistentData().put("AbsorbedItem",messageItemSync.stack.serializeNBT());
+        }));
     }
+    
+    
 }

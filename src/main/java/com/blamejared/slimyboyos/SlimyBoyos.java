@@ -1,34 +1,32 @@
 package com.blamejared.slimyboyos;
 
+import com.blamejared.slimyboyos.client.render.SlimeItemLayer;
+import com.blamejared.slimyboyos.events.*;
 import com.blamejared.slimyboyos.network.PacketHandler;
-import com.blamejared.slimyboyos.proxy.CommonProxy;
-import com.blamejared.slimyboyos.reference.Reference;
-import net.minecraftforge.fml.common.*;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.*;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
 
-@Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION)
+
+@Mod("slimyboyos")
 public class SlimyBoyos {
     
-    @Mod.Instance(Reference.MODID)
-    public static SlimyBoyos INSTANCE;
-    
-    
-    @SidedProxy(clientSide = "com.blamejared.slimyboyos.proxy.ClientProxy", serverSide = "com.blamejared.slimyboyos.proxy.CommonProxy")
-    public static CommonProxy PROXY;
-    
-    @Mod.EventHandler
-    public void onFMLPreInitialization(FMLPreInitializationEvent event) {
-        PROXY.registerEvents();
-        PacketHandler.preInit();
+    public SlimyBoyos() {
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        PacketHandler.init();
+        MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
+        
     }
     
-    @Mod.EventHandler
-    public void onFMLInitialization(FMLInitializationEvent event) {
-        PROXY.registerRenderers();
+    private void doClientStuff(final FMLClientSetupEvent event) {
+        MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
     }
     
-    @Mod.EventHandler
-    public void onFMLPostInitialization(FMLPostInitializationEvent event) {
     
-    }
+    
 }

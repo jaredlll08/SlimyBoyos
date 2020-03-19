@@ -1,24 +1,25 @@
 package com.blamejared.slimyboyos.events;
 
-import com.blamejared.slimyboyos.SlimyBoyos;
 import com.blamejared.slimyboyos.network.*;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntitySlime;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.*;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.monster.*;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenTrees;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.*;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.List;
 
+
 public class CommonEventHandler {
+    
+    public static final ResourceLocation SLIMES = new ResourceLocation("forge:slimes");
     
     public CommonEventHandler() {
         MinecraftForge.EVENT_BUS.register(this);
@@ -29,25 +30,28 @@ public class CommonEventHandler {
         if(event.getEntity().world.isRemote) {
             return;
         }
-        if(event.getEntity() instanceof EntitySlime) {
-            if(event.getEntityLiving().isDead){
+        
+        if(event.getEntity().getType().getTags().contains(SLIMES)) {
+            if(!event.getEntityLiving().isAlive()) {
                 return;
             }
-            if(!((EntitySlime) event.getEntity()).getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()){
+            CompoundNBT data = event.getEntityLiving().getPersistentData();
+            if(data.contains("AbsorbedItem")) {
                 return;
             }
-            
-            AxisAlignedBB bb = event.getEntity().getEntityBoundingBox();
-            List<EntityItem> list = event.getEntity().world.getEntitiesWithinAABB(EntityItem.class, bb);
+            AxisAlignedBB bb = event.getEntity().getBoundingBox();
+            List<ItemEntity> list = event.getEntity().world.getEntitiesWithinAABB(ItemEntity.class, bb);
             if(!list.isEmpty()) {
-                if(list.get(0).cannotPickup()){
-                   return;
+                if(list.get(0).cannotPickup()) {
+                    return;
                 }
-                event.getEntity().setItemStackToSlot(EntityEquipmentSlot.HEAD, list.get(0).getItem().copy());
-                PacketHandler.INSTANCE.sendToAllAround(new MessageEntitySync((EntitySlime) event.getEntityLiving()), new NetworkRegistry.TargetPoint(event.getEntity().world.provider.getDimension(), event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, 128D));
+                ItemStack newItem = list.get(0).getItem().copy();
+                newItem.setCount(1);
+                data.put("AbsorbedItem", newItem.serializeNBT());
+                PacketHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(event.getEntityLiving().getPosX(), event.getEntityLiving().getPosY(), event.getEntityLiving().getPosZ(), 128, event.getEntityLiving().world.getDimension().getType())), new MessageItemSync(newItem, event.getEntity().getEntityId()));//sendToAllAround(new MessageEntitySync((EntitySlime) event.getEntityLiving()), new NetworkRegistry.TargetPoint(event.getEntity().world.provider.getDimension(), event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, 128D));
                 list.get(0).getItem().shrink(1);
                 if(list.get(0).getItem().getCount() <= 0) {
-                    list.get(0).setDead();
+                    list.get(0).remove();
                 }
             }
         }
@@ -58,14 +62,15 @@ public class CommonEventHandler {
         if(event.getEntity().world.isRemote) {
             return;
         }
-        if(event.getEntity() instanceof EntitySlime) {
-            EntityLivingBase base = event.getEntityLiving();
-            ItemStack stack = base.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+        if(event.getEntity().getType().getTags().contains(SLIMES)) {
+            LivingEntity base = event.getEntityLiving();
+            CompoundNBT data = base.getPersistentData();
+            ItemStack stack = ItemStack.read(data.getCompound("AbsorbedItem"));
             if(!stack.isEmpty()) {
                 World world = base.world;
-                EntityItem entityitem = new EntityItem(world, base.posX, base.posY+1, base.posZ, stack.copy());
+                ItemEntity entityitem = new ItemEntity(world, base.getPosX(), base.getPosY() + 1, base.getPosZ(), stack.copy());
                 entityitem.setPickupDelay(20);
-                world.spawnEntity(entityitem);
+                world.addEntity(entityitem);
             }
         }
     }
