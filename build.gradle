@@ -73,7 +73,7 @@ task genGitChangelog() {
     def stdout = new ByteArrayOutputStream()
     // first commit to check from, in our case the first commit of the branch
     String firstCommit = "08fe429189558c0f5dec1f21db81ad9076fe58b9";
-    String repoLink = "https://github.com/CraftTweaker/JEITweaker/commit/"
+    String repoLink = "https://github.com/jaredlll08/SlimyBoyos/commit/"
     // was having issues with grep and spaces in the regex
     exec {
         commandLine 'git', 'log', '-i', '--grep=version\\spush', '--pretty=tformat:%H', '--date=local', firstCommit + '..@{0}'
