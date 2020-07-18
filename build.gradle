@@ -22,7 +22,7 @@ if (project.hasProperty('secretFile')) {
     loadSecrets(new File((String) findProperty('secretFile')))
 }
 
-version = "2.0.1"
+version = "3.0.0"
 if (System.getenv('BUILD_NUMBER') != null) {
     version += "." + System.getenv('BUILD_NUMBER')
 }
@@ -32,7 +32,7 @@ archivesBaseName = "SlimyBoyos"
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200225-1.15.1'
+    mappings channel: 'snapshot', version: '20200712-1.16.1'
     accessTransformer = file('src/main/resources/META-INF/slime_at.cfg')
     runs {
         client {
@@ -95,7 +95,7 @@ task genGitChangelog() {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.1.25'
+    minecraft 'net.minecraftforge:forge:1.16.1-32.0.63'
 }
 
 jar {
@@ -209,7 +209,7 @@ task updateVersionTracker {
         def body = [
                 'author'        : "${project.findProperty('versionTrackerAuthor')}",
                 'projectName'   : "SlimyBoyos",
-                'gameVersion'   : "1.15.2",
+                'gameVersion'   : "1.16.1",
                 'projectVersion': "${version}",
                 'homepage'      : "${project.findProperty('versionTrackerHomepage')}",
                 'uid'           : "${project.findProperty('versionTrackerKey')}"

@@ -1,10 +1,10 @@
 modLoader="javafml"
-loaderVersion="[31,)"
+loaderVersion="[32,)"
 [[mods]]
 modId="slimyboyos"
 version="${file.jarVersion}"
 displayName="SlimyBoyos"
-updateJSONURL="https://updates.blamejared.com/get?n=SlimyBoyos&gv=1.15.2"
+updateJSONURL="https://updates.blamejared.com/get?n=SlimyBoyos&gv=1.16.1"
 authors="Jaredlll08"
 description='''
 Makes slimes pickup items.

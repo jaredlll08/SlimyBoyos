@@ -48,7 +48,7 @@ public class CommonEventHandler {
                 ItemStack newItem = list.get(0).getItem().copy();
                 newItem.setCount(1);
                 data.put("AbsorbedItem", newItem.serializeNBT());
-                PacketHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(event.getEntityLiving().getPosX(), event.getEntityLiving().getPosY(), event.getEntityLiving().getPosZ(), 128, event.getEntityLiving().world.getDimension().getType())), new MessageItemSync(newItem, event.getEntity().getEntityId()));//sendToAllAround(new MessageEntitySync((EntitySlime) event.getEntityLiving()), new NetworkRegistry.TargetPoint(event.getEntity().world.provider.getDimension(), event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, 128D));
+                PacketHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(event.getEntityLiving().getPosX(), event.getEntityLiving().getPosY(), event.getEntityLiving().getPosZ(), 128, event.getEntityLiving().world.func_234923_W_())), new MessageItemSync(newItem, event.getEntity().getEntityId()));//sendToAllAround(new MessageEntitySync((EntitySlime) event.getEntityLiving()), new NetworkRegistry.TargetPoint(event.getEntity().world.provider.getDimension(), event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, 128D));
                 list.get(0).getItem().shrink(1);
                 if(list.get(0).getItem().getCount() <= 0) {
                     list.get(0).remove();

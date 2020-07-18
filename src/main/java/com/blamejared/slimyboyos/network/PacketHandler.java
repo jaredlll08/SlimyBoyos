@@ -7,7 +7,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class PacketHandler {
     
-    public static SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation("slimyboyos:main"), () -> "2.0.0", "2.0.0"::equals, "2.0.0"::equals);
+    public static SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation("slimyboyos:main"), () -> "3.0.0", "3.0.0"::equals, "3.0.0"::equals);
     
     private static int ID = 0;
     
