@@ -30,9 +30,13 @@ group = "com.blamejared.slimyboyos"
 archivesBaseName = "SlimyBoyos"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-
+repositories {
+    maven {
+        url 'https://dogforce-games.com/maven'
+    }
+}
 minecraft {
-    mappings channel: 'snapshot', version: '20200712-1.16.1'
+    mappings channel: 'snapshot', version: '20200820-1.16.1'
     accessTransformer = file('src/main/resources/META-INF/slime_at.cfg')
     runs {
         client {
@@ -95,7 +99,7 @@ task genGitChangelog() {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.1-32.0.63'
+    minecraft 'net.minecraftforge:forge:1.16.2-33.0.61'
 }
 
 jar {
@@ -209,7 +213,7 @@ task updateVersionTracker {
         def body = [
                 'author'        : "${project.findProperty('versionTrackerAuthor')}",
                 'projectName'   : "SlimyBoyos",
-                'gameVersion'   : "1.16.1",
+                'gameVersion'   : "1.16.2",
                 'projectVersion': "${version}",
                 'homepage'      : "${project.findProperty('versionTrackerHomepage')}",
                 'uid'           : "${project.findProperty('versionTrackerKey')}"
