@@ -4,13 +4,16 @@ import com.blamejared.slimyboyos.network.*;
 import net.minecraft.entity.*;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.*;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -48,11 +51,25 @@ public class CommonEventHandler {
                 ItemStack newItem = list.get(0).getItem().copy();
                 newItem.setCount(1);
                 data.put("AbsorbedItem", newItem.serializeNBT());
-                PacketHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(event.getEntityLiving().getPosX(), event.getEntityLiving().getPosY(), event.getEntityLiving().getPosZ(), 128, event.getEntityLiving().world.getDimensionKey())), new MessageItemSync(newItem, event.getEntity().getEntityId()));//sendToAllAround(new MessageEntitySync((EntitySlime) event.getEntityLiving()), new NetworkRegistry.TargetPoint(event.getEntity().world.provider.getDimension(), event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, 128D));
+                PacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> event.getEntity()), new MessageItemSync(newItem, event.getEntity().getEntityId()));//sendToAllAround(new MessageEntitySync((EntitySlime) event.getEntityLiving()), new NetworkRegistry.TargetPoint(event.getEntity().world.provider.getDimension(), event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, 128D));
                 list.get(0).getItem().shrink(1);
                 if(list.get(0).getItem().getCount() <= 0) {
                     list.get(0).remove();
                 }
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public void onStartEntityTracking(PlayerEvent.StartTracking event) {
+        if(event.getEntity().world.isRemote || !event.getTarget().isAlive()) {
+            return;
+        }
+        if(event.getTarget().getType().getTags().contains(SLIMES)) {
+            CompoundNBT data = event.getTarget().getPersistentData();
+            ItemStack stack = ItemStack.read(data.getCompound("AbsorbedItem"));
+            if(!stack.isEmpty()) {
+                PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new MessageItemSync(stack, event.getTarget().getEntityId()));
             }
         }
     }
@@ -66,8 +83,8 @@ public class CommonEventHandler {
             LivingEntity base = event.getEntityLiving();
             CompoundNBT data = base.getPersistentData();
             ItemStack stack = ItemStack.read(data.getCompound("AbsorbedItem"));
-            if(!stack.isEmpty()) {
-                World world = base.world;
+            World world = base.world;
+            if(!stack.isEmpty() && world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
                 ItemEntity entityitem = new ItemEntity(world, base.getPosX(), base.getPosY() + 1, base.getPosZ(), stack.copy());
                 entityitem.setPickupDelay(20);
                 world.addEntity(entityitem);
