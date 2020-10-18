@@ -1,19 +1,25 @@
 package com.blamejared.slimyboyos.events;
 
-import com.blamejared.slimyboyos.SlimyBoyos;
+import com.blamejared.slimyboyos.capability.SlimeAbsorption;
+import com.blamejared.slimyboyos.capability.SlimeAbsorptionCapability;
+import com.blamejared.slimyboyos.network.MessageItemPickup;
 import com.blamejared.slimyboyos.network.MessageItemSync;
 import com.blamejared.slimyboyos.network.PacketHandler;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -71,6 +77,28 @@ public class CommonEventHandler {
                 event.getDrops().add(item);
             }
         });
+    }
+
+    @SubscribeEvent
+    public void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+        Entity e = event.getObject();
+        if (e.getType().getTags().contains(SLIMES)) {
+            event.addCapability(SlimeAbsorption.Provider.NAME, new SlimeAbsorption.Provider());
+        }
+    }
+
+    @SubscribeEvent
+    public void onStartTracking(PlayerEvent.StartTracking event) {
+        if (!(event.getPlayer() instanceof ServerPlayerEntity) || !event.getTarget().isAlive()) {
+            return;
+        }
+
+        event.getTarget().getCapability(SlimeAbsorptionCapability.SLIME_ABSORPTION).ifPresent(
+                slimeAbsorption -> PacketHandler.CHANNEL.send(
+                        PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
+                        new MessageItemSync(event.getTarget().getEntityId(), slimeAbsorption.getAbsorbedStack())
+                )
+        );
     }
 
     @SubscribeEvent

@@ -9,6 +9,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
@@ -32,6 +33,10 @@ public class PacketHandler {
                 (msg, ctx) -> ctx.get().enqueueWork(() -> {
                     Minecraft mc = Minecraft.getInstance();
                     ClientWorld w = mc.world;
+                    if (w == null) {
+                        return;
+                    }
+
                     Entity collected = w.getEntityByID(msg.collectedItemEntityId);
                     Entity collector = w.getEntityByID(msg.collectorEntityId);
 
@@ -58,12 +63,18 @@ public class PacketHandler {
                 },
                 pb -> new MessageItemSync(pb.readVarInt(), pb.readItemStack()),
                 (msg, ctx) -> ctx.get().enqueueWork(() -> {
-                    Entity e = Minecraft.getInstance().world.getEntityByID(msg.entityId);
-
-                    if (e != null) {
-                        e.getCapability(SlimeAbsorptionCapability.SLIME_ABSORPTION)
-                                .ifPresent(slimeAbsorption -> slimeAbsorption.setAbsorbedStack(msg.absorbedStack));
+                    World w = Minecraft.getInstance().world;
+                    if (w == null) {
+                        return;
                     }
+
+                    Entity e = w.getEntityByID(msg.entityId);
+                    if (e == null) {
+                        return;
+                    }
+
+                    e.getCapability(SlimeAbsorptionCapability.SLIME_ABSORPTION)
+                            .ifPresent(slimeAbsorption -> slimeAbsorption.setAbsorbedStack(msg.absorbedStack));
                 }));
     }
 
