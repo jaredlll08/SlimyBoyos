@@ -42,6 +42,9 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+
             mods {
                 slimyboyos {
                     source sourceSets.main
@@ -52,6 +55,9 @@ minecraft {
         server {
             workingDirectory project.file('run')
 
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+
             mods {
                 slimyboyos {
                     source sourceSets.main
@@ -61,6 +67,9 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
 
             args '--mod', 'slimyboyos', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
@@ -107,17 +116,16 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title": "slimyboyos",
-                "Specification-Vendor": "BlameJared",
-                "Specification-Version": "1",
-                "Implementation-Title": project.name,
-                "Implementation-Version": "${version}",
-                "Implementation-Vendor" :"BlameJared",
+                "Specification-Title"     : "slimyboyos",
+                "Specification-Vendor"    : "BlameJared",
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : "${version}",
+                "Implementation-Vendor"   : "BlameJared",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
-
 
 
 task sourcesJar(type: Jar, dependsOn: classes) {
