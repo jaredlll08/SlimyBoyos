@@ -57,7 +57,7 @@ public class CommonEventHandler {
     @SubscribeEvent
     public void onLivingDrops(LivingDropsEvent event) {
         LivingEntity living = event.getEntityLiving();
-        if (living.world.isRemote) {
+        if (living.world.isRemote || !living.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
             return;
         }
 
