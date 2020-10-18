@@ -34,8 +34,6 @@ public class SlimeItemLayer<T extends Entity> extends LayerRenderer<T, SlimeMode
                     stack.rotate(Vector3f.XP.rotationDegrees(180));
                     stack.translate(0, -1, 0);
                     stack.rotate(Vector3f.XP.rotationDegrees(90));
-                    float angle = entity.rotationYaw;
-                    stack.rotate(Vector3f.ZN.rotationDegrees(angle));
                     stack.translate(0, -(2 * 0.0626), 0);
                     stack.translate(0, 0, -0.0626 / 4);
                     stack.rotate(Vector3f.YP.rotationDegrees(90));
