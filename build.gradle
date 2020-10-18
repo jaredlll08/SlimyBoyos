@@ -22,7 +22,7 @@ if (project.hasProperty('secretFile')) {
     loadSecrets(new File((String) findProperty('secretFile')))
 }
 
-version = "3.0.0"
+version = "3.1.0"
 if (System.getenv('BUILD_NUMBER') != null) {
     version += "." + System.getenv('BUILD_NUMBER')
 }
@@ -37,7 +37,7 @@ repositories {
 }
 minecraft {
     mappings channel: 'snapshot', version: '20200820-1.16.1'
-    accessTransformer = file('src/main/resources/META-INF/slime_at.cfg')
+    //accessTransformer = file('src/main/resources/META-INF/slime_at.cfg')
     runs {
         client {
             workingDirectory project.file('run')
@@ -62,7 +62,7 @@ minecraft {
         data {
             workingDirectory project.file('run')
 
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'slimyboyos', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
                 slimyboyos {
@@ -72,6 +72,8 @@ minecraft {
         }
     }
 }
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 task genGitChangelog() {
     def stdout = new ByteArrayOutputStream()

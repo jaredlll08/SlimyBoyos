@@ -1,19 +1,25 @@
 package com.blamejared.slimyboyos.events;
 
-import com.blamejared.slimyboyos.network.*;
-import net.minecraft.entity.*;
+import com.blamejared.slimyboyos.capability.SlimeAbsorption;
+import com.blamejared.slimyboyos.capability.SlimeAbsorptionCapability;
+import com.blamejared.slimyboyos.network.MessageItemPickup;
+import com.blamejared.slimyboyos.network.MessageItemSync;
+import com.blamejared.slimyboyos.network.PacketHandler;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.monster.*;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -21,74 +27,85 @@ import java.util.List;
 
 
 public class CommonEventHandler {
-    
+
     public static final ResourceLocation SLIMES = new ResourceLocation("forge:slimes");
-    
-    public CommonEventHandler() {
-        MinecraftForge.EVENT_BUS.register(this);
-    }
-    
+
     @SubscribeEvent
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent event) {
-        if(event.getEntity().world.isRemote) {
+        LivingEntity living = event.getEntityLiving();
+        if (living.world.isRemote || !living.isAlive() || !living.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING)) {
             return;
         }
-        
-        if(event.getEntity().getType().getTags().contains(SLIMES)) {
-            if(!event.getEntityLiving().isAlive()) {
+
+        living.getCapability(SlimeAbsorptionCapability.SLIME_ABSORPTION).ifPresent(slimeAbsorption -> {
+            if (!slimeAbsorption.getAbsorbedStack().isEmpty()) {
                 return;
             }
-            CompoundNBT data = event.getEntityLiving().getPersistentData();
-            if(data.contains("AbsorbedItem")) {
-                return;
-            }
-            AxisAlignedBB bb = event.getEntity().getBoundingBox();
-            List<ItemEntity> list = event.getEntity().world.getEntitiesWithinAABB(ItemEntity.class, bb);
-            if(!list.isEmpty()) {
-                if(list.get(0).cannotPickup()) {
-                    return;
-                }
-                ItemStack newItem = list.get(0).getItem().copy();
-                newItem.setCount(1);
-                data.put("AbsorbedItem", newItem.serializeNBT());
-                PacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> event.getEntity()), new MessageItemSync(newItem, event.getEntity().getEntityId()));//sendToAllAround(new MessageEntitySync((EntitySlime) event.getEntityLiving()), new NetworkRegistry.TargetPoint(event.getEntity().world.provider.getDimension(), event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, 128D));
-                list.get(0).getItem().shrink(1);
-                if(list.get(0).getItem().getCount() <= 0) {
-                    list.get(0).remove();
+            AxisAlignedBB bb = living.getBoundingBox();
+            List<ItemEntity> list = living.world.getEntitiesWithinAABB(ItemEntity.class, bb,
+                    item -> item.isAlive() && !item.cannotPickup() && !item.getItem().isEmpty());
+            if (!list.isEmpty()) {
+                ItemEntity item = list.get(0);
+                ItemStack stack = item.getItem();
+
+                ItemStack absorbedStack = stack.split(1);
+                slimeAbsorption.setAbsorbedStack(absorbedStack);
+                PacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(event::getEntity),
+                        new MessageItemPickup(item.getEntityId(), living.getEntityId(), absorbedStack.copy()));
+
+                if (stack.isEmpty()) {
+                    item.remove();
                 }
             }
-        }
+        });
     }
-    
-    @SubscribeEvent
-    public void onStartEntityTracking(PlayerEvent.StartTracking event) {
-        if(event.getEntity().world.isRemote || !event.getTarget().isAlive()) {
-            return;
-        }
-        if(event.getTarget().getType().getTags().contains(SLIMES)) {
-            CompoundNBT data = event.getTarget().getPersistentData();
-            ItemStack stack = ItemStack.read(data.getCompound("AbsorbedItem"));
-            if(!stack.isEmpty()) {
-                PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new MessageItemSync(stack, event.getTarget().getEntityId()));
-            }
-        }
-    }
-    
+
     @SubscribeEvent
     public void onLivingDrops(LivingDropsEvent event) {
-        if(event.getEntity().world.isRemote) {
+        LivingEntity living = event.getEntityLiving();
+        if (living.world.isRemote || !living.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
             return;
         }
-        if(event.getEntity().getType().getTags().contains(SLIMES)) {
-            LivingEntity base = event.getEntityLiving();
-            CompoundNBT data = base.getPersistentData();
-            ItemStack stack = ItemStack.read(data.getCompound("AbsorbedItem"));
-            World world = base.world;
-            if(!stack.isEmpty() && world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-                ItemEntity entityitem = new ItemEntity(world, base.getPosX(), base.getPosY() + 1, base.getPosZ(), stack.copy());
-                entityitem.setPickupDelay(20);
-                world.addEntity(entityitem);
+
+        living.getCapability(SlimeAbsorptionCapability.SLIME_ABSORPTION).ifPresent(slimeAbsorption -> {
+            ItemStack stack = slimeAbsorption.getAbsorbedStack();
+            if (!stack.isEmpty()) {
+                World world = living.world;
+                ItemEntity item = new ItemEntity(world, living.getPosX(), living.getPosY(), living.getPosZ(),
+                        stack.copy());
+                item.setDefaultPickupDelay();
+                event.getDrops().add(item);
             }
+        });
+    }
+
+    @SubscribeEvent
+    public void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+        Entity e = event.getObject();
+        if (e.getType().getTags().contains(SLIMES)) {
+            event.addCapability(SlimeAbsorption.Provider.NAME, new SlimeAbsorption.Provider());
         }
+    }
+
+    @SubscribeEvent
+    public void onStartTracking(PlayerEvent.StartTracking event) {
+        if (!(event.getPlayer() instanceof ServerPlayerEntity) || !event.getTarget().isAlive()) {
+            return;
+        }
+
+        event.getTarget().getCapability(SlimeAbsorptionCapability.SLIME_ABSORPTION).ifPresent(
+                slimeAbsorption -> PacketHandler.CHANNEL.send(
+                        PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
+                        new MessageItemSync(event.getTarget().getEntityId(), slimeAbsorption.getAbsorbedStack())
+                )
+        );
+    }
+
+    @SubscribeEvent
+    public void onCheckDespawn(LivingSpawnEvent.AllowDespawn event) {
+        event.getEntity().getCapability(SlimeAbsorptionCapability.SLIME_ABSORPTION)
+                .lazyMap(SlimeAbsorption::getAbsorbedStack)
+                .filter(stack -> !stack.isEmpty())
+                .ifPresent(stack -> event.setResult(Event.Result.DENY));
     }
 }
