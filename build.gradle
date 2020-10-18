@@ -62,7 +62,7 @@ minecraft {
         data {
             workingDirectory project.file('run')
 
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'slimyboyos', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
                 slimyboyos {
@@ -72,6 +72,8 @@ minecraft {
         }
     }
 }
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 task genGitChangelog() {
     def stdout = new ByteArrayOutputStream()
