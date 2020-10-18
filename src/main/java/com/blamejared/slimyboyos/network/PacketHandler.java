@@ -1,11 +1,11 @@
 package com.blamejared.slimyboyos.network;
 
+import com.blamejared.slimyboyos.capability.SlimeAbsorptionCapability;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ItemPickupParticle;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -22,13 +22,13 @@ public class PacketHandler {
     public static void init() {
         CHANNEL.registerMessage(
                 ID++,
-                MessageItemSync.class,
+                MessageItemPickup.class,
                 (msg, pb) -> {
                     pb.writeVarInt(msg.collectedItemEntityId);
                     pb.writeVarInt(msg.collectorEntityId);
-                    pb.writeVarInt(msg.collectedAmount);
+                    pb.writeItemStack(msg.absorbedStack);
                 },
-                pb -> new MessageItemSync(pb.readVarInt(), pb.readVarInt(), pb.readVarInt()),
+                pb -> new MessageItemPickup(pb.readVarInt(), pb.readVarInt(), pb.readItemStack()),
                 (msg, ctx) -> ctx.get().enqueueWork(() -> {
                     Minecraft mc = Minecraft.getInstance();
                     ClientWorld w = mc.world;
@@ -38,19 +38,31 @@ public class PacketHandler {
                     if (collector != null && collected instanceof ItemEntity) {
                         ItemEntity item = (ItemEntity) collected;
 
-                        w.playSound(item.getPosX(), item.getPosY(), item.getPosZ(),
-                                SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS,
-                                0.2F, (w.rand.nextFloat() - w.rand.nextFloat()) * 1.4F + 2.0F, false);
-                        mc.particles.addEffect(new ItemPickupParticle(mc.getRenderManager(),
-                                mc.getRenderTypeBuffers(), w, item, collector));
+                        collector.getCapability(SlimeAbsorptionCapability.SLIME_ABSORPTION).ifPresent(slimeAbsorption -> {
+                            w.playSound(item.getPosX(), item.getPosY(), item.getPosZ(),
+                                    SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS,
+                                    0.2F, (w.rand.nextFloat() - w.rand.nextFloat()) * 1.4F + 2.0F, false);
+                            mc.particles.addEffect(new ItemPickupParticle(mc.getRenderManager(),
+                                    mc.getRenderTypeBuffers(), w, item, collector));
 
-                        ItemStack stack = item.getItem();
-                        ItemStack pickup = stack.split(msg.collectedAmount);
-                        collector.getPersistentData().put("AbsorbedItem", pickup.serializeNBT());
+                            slimeAbsorption.setAbsorbedStack(msg.absorbedStack);
+                        });
+                    }
+                }));
+        CHANNEL.registerMessage(
+                ID++,
+                MessageItemSync.class,
+                (msg, pb) -> {
+                    pb.writeVarInt(msg.entityId);
+                    pb.writeItemStack(msg.absorbedStack);
+                },
+                pb -> new MessageItemSync(pb.readVarInt(), pb.readItemStack()),
+                (msg, ctx) -> ctx.get().enqueueWork(() -> {
+                    Entity e = Minecraft.getInstance().world.getEntityByID(msg.entityId);
 
-                        if (stack.isEmpty()) {
-                            w.removeEntityFromWorld(msg.collectedItemEntityId);
-                        }
+                    if (e != null) {
+                        e.getCapability(SlimeAbsorptionCapability.SLIME_ABSORPTION)
+                                .ifPresent(slimeAbsorption -> slimeAbsorption.setAbsorbedStack(msg.absorbedStack));
                     }
                 }));
     }

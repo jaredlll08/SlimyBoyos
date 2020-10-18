@@ -1,5 +1,6 @@
 package com.blamejared.slimyboyos.client.render;
 
+import com.blamejared.slimyboyos.capability.SlimeAbsorptionCapability;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -10,11 +11,9 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants;
 
 @OnlyIn(Dist.CLIENT)
 public class SlimeItemLayer<T extends Entity> extends LayerRenderer<T, SlimeModel<T>> {
@@ -26,9 +25,8 @@ public class SlimeItemLayer<T extends Entity> extends LayerRenderer<T, SlimeMode
     public void render(MatrixStack stack, IRenderTypeBuffer type, int p_225628_3_, T entity, float p_225628_5_,
                        float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_, float p_225628_10_) {
         if (entity.isAlive() && !entity.isInvisible()) {
-            CompoundNBT data = entity.getPersistentData();
-            if (data.contains("AbsorbedItem", Constants.NBT.TAG_COMPOUND)) {
-                ItemStack itemStack = ItemStack.read(data.getCompound("AbsorbedItem"));
+            entity.getCapability(SlimeAbsorptionCapability.SLIME_ABSORPTION).ifPresent(slimeAbsorption -> {
+                ItemStack itemStack = slimeAbsorption.getAbsorbedStack();
                 if (!itemStack.isEmpty()) {
                     stack.push();
                     stack.rotate(Vector3f.XP.rotationDegrees(180));
@@ -42,7 +40,7 @@ public class SlimeItemLayer<T extends Entity> extends LayerRenderer<T, SlimeMode
                             type);
                     stack.pop();
                 }
-            }
+            });
         }
     }
 }

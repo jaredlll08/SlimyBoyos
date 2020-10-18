@@ -1,5 +1,6 @@
 package com.blamejared.slimyboyos;
 
+import com.blamejared.slimyboyos.capability.SlimeAbsorptionCapability;
 import com.blamejared.slimyboyos.events.ClientEventHandler;
 import com.blamejared.slimyboyos.events.CommonEventHandler;
 import com.blamejared.slimyboyos.network.PacketHandler;
@@ -24,6 +25,7 @@ public class SlimyBoyos {
 
     private void setup(final FMLCommonSetupEvent event) {
         PacketHandler.init();
+        SlimeAbsorptionCapability.init();
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

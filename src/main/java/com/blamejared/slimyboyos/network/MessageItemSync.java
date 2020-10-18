@@ -1,14 +1,14 @@
 package com.blamejared.slimyboyos.network;
 
+import net.minecraft.item.ItemStack;
+
 public class MessageItemSync {
 
-    public final int collectedItemEntityId;
-    public final int collectorEntityId;
-    public final int collectedAmount;
+    public final int entityId;
+    public final ItemStack absorbedStack;
 
-    public MessageItemSync(int collectedItemEntityId, int collectorEntityId, int collectedAmount) {
-        this.collectedItemEntityId = collectedItemEntityId;
-        this.collectorEntityId = collectorEntityId;
-        this.collectedAmount = collectedAmount;
+    public MessageItemSync(int entityId, ItemStack absorbedStack) {
+        this.entityId = entityId;
+        this.absorbedStack = absorbedStack;
     }
 }
