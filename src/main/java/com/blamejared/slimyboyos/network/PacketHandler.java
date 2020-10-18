@@ -1,5 +1,6 @@
 package com.blamejared.slimyboyos.network;
 
+import com.blamejared.slimyboyos.SlimyBoyos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -21,7 +22,10 @@ public class PacketHandler {
                     pb.writeItemStack(msg.absorbedStack);
                 },
                 pb -> new MessageItemPickup(pb.readVarInt(), pb.readVarInt(), pb.readItemStack()),
-                (msg, ctx) -> ClientPacketHandler.handleItemPickup(msg, ctx)
+                (msg, ctx) -> {
+                    ctx.get().enqueueWork(() -> SlimyBoyos.PROXY.handleItemPickup(msg));
+                    ctx.get().setPacketHandled(true);
+                }
         );
         CHANNEL.registerMessage(
                 ID++,
@@ -31,7 +35,10 @@ public class PacketHandler {
                     pb.writeItemStack(msg.absorbedStack);
                 },
                 pb -> new MessageItemSync(pb.readVarInt(), pb.readItemStack()),
-                (msg, ctx) -> ClientPacketHandler.handleItemSync(msg, ctx)
+                (msg, ctx) -> {
+                    ctx.get().enqueueWork(() -> SlimyBoyos.PROXY.handleItemSync(msg));
+                    ctx.get().setPacketHandled(true);
+                }
         );
     }
 }
