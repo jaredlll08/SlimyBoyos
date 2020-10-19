@@ -47,7 +47,8 @@ public class MessageEntitySync implements IMessage, IMessageHandler<MessageEntit
     private void handle(MessageEntitySync message, MessageContext ctx) {
         if(FMLClientHandler.instance().getClient().world != null) {
             Entity entityByID = FMLClientHandler.instance().getClient().world.getEntityByID(message.id);
-            entityByID.setItemStackToSlot(EntityEquipmentSlot.HEAD, message.headStack);
+            if (entityByID != null)
+                entityByID.setItemStackToSlot(EntityEquipmentSlot.HEAD, message.headStack);
         }
     }
     
