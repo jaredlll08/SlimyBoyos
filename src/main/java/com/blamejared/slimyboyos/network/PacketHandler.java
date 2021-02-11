@@ -6,13 +6,14 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class PacketHandler {
-
+    
     public static SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation("slimyboyos:main"),
             () -> "3.1.0", "3.1.0"::equals, "3.1.0"::equals);
-
+    
     private static int ID = 0;
-
+    
     public static void init() {
+        
         CHANNEL.registerMessage(
                 ID++,
                 MessageItemPickup.class,
@@ -41,4 +42,5 @@ public class PacketHandler {
                 }
         );
     }
+    
 }
