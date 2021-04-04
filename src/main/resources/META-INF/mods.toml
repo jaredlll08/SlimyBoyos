@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="[34,)"
-license="MIT"
+license="LGPL v2.1"
 [[mods]]
 modId="slimyboyos"
 version="${file.jarVersion}"
