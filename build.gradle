@@ -32,9 +32,6 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-
             mods {
                 slimyboyos {
                     source sourceSets.main
@@ -45,9 +42,6 @@ minecraft {
         server {
             workingDirectory project.file('run')
 
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-
             mods {
                 slimyboyos {
                     source sourceSets.main
@@ -57,9 +51,6 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
 
             args '--mod', 'slimyboyos', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
@@ -192,8 +183,6 @@ curseforge {
         changelog = file("changelog.md")
         changelogType = 'markdown'
 
-//        addArtifact(sourcesJar)
-//        addArtifact(javadocJar)
         addArtifact(deobfJar)
     }
 }
