@@ -1,0 +1,12 @@
+modLoader="javafml"
+loaderVersion="[40,)"
+license="LGPL v2.1"
+[[mods]]
+modId="slimyboyos"
+version="${file.jarVersion}"
+displayName="SlimyBoyos"
+updateJSONURL="https://updates.blamejared.com/get?n=SlimyBoyos&gv=1.18.2"
+authors="Jaredlll08"
+description='''
+Makes slimes pickup items.
+'''

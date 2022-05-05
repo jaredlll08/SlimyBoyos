@@ -3,7 +3,7 @@
 pipeline {
     agent any
     tools {
-        jdk "jdk8u292-b10"
+        jdk "jdk-17.0.1"
     }
     stages {
         stage('Clean') {
@@ -23,13 +23,6 @@ pipeline {
                 }
             }
         }
-        stage('Git Changelog') {
-            steps {
-                withCredentials([file(credentialsId: 'mod_build_secrets', variable: 'ORG_GRADLE_PROJECT_secretFile')]) {
-                    sh './gradlew genGitChangelog'
-                }
-            }
-        }
 
         stage('Publish') {
             steps {
@@ -44,12 +37,6 @@ pipeline {
                     sh './gradlew curseforge'
                 }
             }
-        }
-    }
-    post {
-        always {
-            archive 'build/libs/**.jar'
-            archive 'changelog.md'
         }
     }
 }

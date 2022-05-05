@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "slimyboyos",
+  "version": "${version}",
+  "name": "Slimy Boyos",
+  "description": "Makes slimes pickup items.",
+  "authors": [
+    "Jaredlll08"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/slimyboyos",
+    "sources": "https://github.com/jaredlll08/SlimyBoyos"
+  },
+  "license": "LGPL v2.1",
+  "icon": "assets/slimyboyos/logo.png",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "mixins": [
+    "slimyboyos.mixins.json",
+    "slimyboyos.fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.13",
+    "fabric": "*",
+    "minecraft": "1.18.x",
+    "java": ">=17"
+  }
+}
+  
