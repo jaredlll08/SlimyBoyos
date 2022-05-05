@@ -146,6 +146,7 @@ tasks.create("postDiscord") {
         } catch (e: IOException) {
 
             project.logger.error("Failed to push CF Discord webhook.")
+            e.printStackTrace()
         }
     }
 
