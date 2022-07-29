@@ -5,7 +5,7 @@ license="LGPL v2.1"
 modId="slimyboyos"
 version="${file.jarVersion}"
 displayName="SlimyBoyos"
-updateJSONURL="https://updates.blamejared.com/get?n=SlimyBoyos&gv=1.19"
+updateJSONURL="https://updates.blamejared.com/get?n=SlimyBoyos&gv=1.19.1"
 authors="Jaredlll08"
 description='''
 Makes slimes pickup items.
