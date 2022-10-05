@@ -70,7 +70,7 @@ subprojects {
                         "Implementation-Timestamp" to SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(Date()),
                         "Timestamp" to System.currentTimeMillis(),
                         "Built-On-Java" to "${System.getProperty("java.vm.version")} (${System.getProperty("java.vm.vendor")})",
-                        "Build-On-Minecraft" to minecraftVersion
+                        "Built-On-Minecraft" to minecraftVersion
                 )
             }
         }
