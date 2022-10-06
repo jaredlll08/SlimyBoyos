@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 public abstract class MixinLivingEntity extends Entity implements IAbsorber {
     
     private static final EntityDataAccessor<ItemStack> DATA_ABSORBED = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.ITEM_STACK);
-    private static final Supplier<TagKey<Item>> SLIME_ABSORB_BLACKLIST = Suppliers.memoize(() -> TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(Constants.MOD_ID, "slime_absorb_blacklist")));
+    private static final Supplier<TagKey<Item>> SLIMES_CANNOT_ABSORB = Suppliers.memoize(() -> TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(Constants.MOD_ID, "slimes_cannot_absorb")));
     
     @Unique
     public boolean slimyboyos$canAbsorb;
@@ -64,7 +64,7 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
             List<ItemEntity> entities = this.level.getEntities(EntityType.ITEM, boundingBox, item -> item.isAlive() && !item.isPickable() && !item.getItem()
                     .isEmpty());
             entities.stream()
-                    .filter(item -> !item.getItem().is(SLIME_ABSORB_BLACKLIST.get()))
+                    .filter(item -> !item.getItem().is(SLIMES_CANNOT_ABSORB.get()))
                     .findFirst()
                     .ifPresent(item -> {
                         ItemStack stack = item.getItem();
