@@ -5,7 +5,7 @@ import net.darkhax.curseforgegradle.Constants as CFG_Contants
 plugins {
     idea
     `maven-publish`
-    id("fabric-loom") version "0.12-SNAPSHOT"
+    id("fabric-loom") version "1.0-SNAPSHOT"
     id("com.blamejared.modtemplate")
     id("net.darkhax.curseforgegradle") version ("1.0.9")
 }

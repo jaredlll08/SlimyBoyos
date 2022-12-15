@@ -5,6 +5,7 @@ import com.blamejared.slimyboyos.api.IAbsorber;
 import com.blamejared.slimyboyos.platform.Services;
 import com.google.common.base.Suppliers;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -34,7 +35,7 @@ import java.util.function.Supplier;
 public abstract class MixinLivingEntity extends Entity implements IAbsorber {
     
     private static final EntityDataAccessor<ItemStack> DATA_ABSORBED = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.ITEM_STACK);
-    private static final Supplier<TagKey<Item>> SLIMES_CANNOT_ABSORB = Suppliers.memoize(() -> TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(Constants.MOD_ID, "slimes_cannot_absorb")));
+    private static final Supplier<TagKey<Item>> SLIMES_CANNOT_ABSORB = Suppliers.memoize(() -> TagKey.create(Registries.ITEM, new ResourceLocation(Constants.MOD_ID, "slimes_cannot_absorb")));
     
     @Unique
     public boolean slimyboyos$canAbsorb;
