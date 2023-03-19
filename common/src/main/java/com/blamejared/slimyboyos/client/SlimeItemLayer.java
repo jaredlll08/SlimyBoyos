@@ -5,13 +5,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.SlimeModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import org.joml.Quaternionf;
 
 public class SlimeItemLayer<T extends Entity> extends RenderLayer<T, SlimeModel<T>> {
@@ -36,12 +35,13 @@ public class SlimeItemLayer<T extends Entity> extends RenderLayer<T, SlimeModel<
                     poseStack.mulPose(new Quaternionf().rotateX(Mth.PI));
                     poseStack.translate(0, -1, 0);
                     poseStack.mulPose(new Quaternionf().rotateX(Mth.PI / 2f));
+                    poseStack.mulPose(new Quaternionf().rotateY(entity.getId() % 360));
                     poseStack.translate(0, -(4 * 0.0626), 0);
                     poseStack.translate(0, 0, -0.0626 / 4);
                     poseStack.mulPose(new Quaternionf().rotateY(Mth.PI / 2f));
                     Minecraft.getInstance()
                             .getItemRenderer()
-                            .renderStatic(stack, ItemTransforms.TransformType.GROUND, i, OverlayTexture.NO_OVERLAY, poseStack, multiBufferSource, (int) entity.blockPosition()
+                            .renderStatic(stack, ItemDisplayContext.GROUND, i, OverlayTexture.NO_OVERLAY, poseStack, multiBufferSource, entity.level, (int) entity.blockPosition()
                                     .asLong());
                     poseStack.popPose();
                 }

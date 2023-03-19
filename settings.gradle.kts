@@ -16,9 +16,6 @@ pluginManagement {
     }
     resolutionStrategy {
         eachPlugin {
-            if (requested.id.id == "net.minecraftforge.gradle") {
-                useModule("${requested.id}:ForgeGradle:${requested.version}")
-            }
             if (requested.id.id == "org.spongepowered.mixin") {
                 useModule("org.spongepowered:mixingradle:${requested.version}")
             }
@@ -27,4 +24,4 @@ pluginManagement {
 }
 
 rootProject.name = "SlimyBoyos"
-include("Common", "Fabric", "Forge")
+include("common", "fabric", "forge")
