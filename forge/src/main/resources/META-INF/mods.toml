@@ -8,7 +8,7 @@ logoBlur=false
 modId="slimyboyos"
 version="${file.jarVersion}"
 displayName="SlimyBoyos"
-updateJSONURL="https://updates.blamejared.com/get?n=SlimyBoyos&gv=1.19.4"
+updateJSONURL="https://updates.blamejared.com/get?n=SlimyBoyos&gv=1.20"
 authors="Jaredlll08"
 description='''
 Makes slimes pickup items.

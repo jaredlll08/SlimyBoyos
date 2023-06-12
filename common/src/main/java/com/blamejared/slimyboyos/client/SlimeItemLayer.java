@@ -41,7 +41,7 @@ public class SlimeItemLayer<T extends Entity> extends RenderLayer<T, SlimeModel<
                     poseStack.mulPose(new Quaternionf().rotateY(Mth.PI / 2f));
                     Minecraft.getInstance()
                             .getItemRenderer()
-                            .renderStatic(stack, ItemDisplayContext.GROUND, i, OverlayTexture.NO_OVERLAY, poseStack, multiBufferSource, entity.level, (int) entity.blockPosition()
+                            .renderStatic(stack, ItemDisplayContext.GROUND, i, OverlayTexture.NO_OVERLAY, poseStack, multiBufferSource, entity.level(), (int) entity.blockPosition()
                                     .asLong());
                     poseStack.popPose();
                 }

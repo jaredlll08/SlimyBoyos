@@ -48,7 +48,7 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
     @Inject(method = "tick", at = @At("HEAD"))
     public void slimyboyos$tick(CallbackInfo ci) {
         
-        if(this.level.isClientSide || !this.isAlive() || !this.level.getGameRules()
+        if(this.level().isClientSide || !this.isAlive() || !this.level().getGameRules()
                 .getBoolean(GameRules.RULE_MOBGRIEFING)) {
             return;
         }
@@ -62,7 +62,7 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
             }
             
             AABB boundingBox = this.getBoundingBox();
-            List<ItemEntity> entities = this.level.getEntities(EntityType.ITEM, boundingBox, item -> item.isAlive() && !item.isPickable() && !item.getItem()
+            List<ItemEntity> entities = this.level().getEntities(EntityType.ITEM, boundingBox, item -> item.isAlive() && !item.isPickable() && !item.getItem()
                     .isEmpty());
             entities.stream()
                     .filter(item -> !item.getItem().is(SLIMES_CANNOT_ABSORB.get()))
@@ -81,7 +81,7 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
     public void slimyboyos$dropCustomDeathLoot(DamageSource $$0, CallbackInfo ci) {
         
-        if(level.isClientSide || !level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+        if(level().isClientSide || !level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
             return;
         }
         ItemStack stack = slimyboyos$getAbsorbedItem();
