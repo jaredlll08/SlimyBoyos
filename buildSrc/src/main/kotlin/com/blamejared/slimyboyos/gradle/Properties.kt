@@ -9,6 +9,7 @@ object Properties {
     const val CURSE_PROJECT_ID = "281993"
     const val CURSE_HOMEPAGE = "https://www.curseforge.com/minecraft/mc-mods/slimyboyos"
     const val MODRINTH_PROJECT_ID = "aT62gFqe"
-    const val FIRST_COMMIT = "4d67d202703dec63becb087ee915db4472a02ed0"
     const val GIT_REPO = "https://github.com/jaredlll08/SlimyBoyos"
+    const val DESCRIPTION = "Makes slimes pickup items."
+    const val ITEM_ICON = "minecraft:slime_ball"
 }

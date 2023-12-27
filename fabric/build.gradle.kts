@@ -5,7 +5,7 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.darkhax.curseforgegradle.Constants as CFG_Constants
 
 plugins {
-    id("fabric-loom") version "1.2-SNAPSHOT"
+    id("fabric-loom") version "1.4-SNAPSHOT"
     id("com.blamejared.slimyboyos.default")
     id("com.blamejared.slimyboyos.loader")
     id("com.modrinth.minotaur")
@@ -13,16 +13,16 @@ plugins {
 
 dependencies {
     minecraft("com.mojang:minecraft:${Versions.MINECRAFT}")
-    mappings(loom.layered {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-1.18.1:2021.12.19@zip")
-    })
+    mappings(loom.officialMojangMappings())
     modImplementation("net.fabricmc:fabric-loader:${Versions.FABRIC_LOADER}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC}")
     implementation(project(":common"))
 }
 
 loom {
+    mixin {
+        defaultRefmapName.set("${Properties.MODID}.refmap.json")
+    }
     runs {
         named("client") {
             client()
@@ -34,9 +34,10 @@ loom {
 }
 
 tasks.create<TaskPublishCurseForge>("publishCurseForge") {
+    dependsOn(tasks.remapJar)
     apiToken = GMUtils.locateProperty(project, "curseforgeApiToken")
 
-    val mainFile = upload(Properties.CURSE_PROJECT_ID, file("${project.buildDir}/libs/${base.archivesName.get()}-$version.jar"))
+    val mainFile = upload(Properties.CURSE_PROJECT_ID, tasks.remapJar.get().archiveFile)
     mainFile.changelogType = "markdown"
     mainFile.changelog = GMUtils.smallChangelog(project, Properties.GIT_REPO)
     mainFile.releaseType = CFG_Constants.RELEASE_TYPE_RELEASE
@@ -60,3 +61,4 @@ modrinth {
         required.project("fabric-api")
     }
 }
+tasks.modrinth.get().dependsOn(tasks.remapJar)
