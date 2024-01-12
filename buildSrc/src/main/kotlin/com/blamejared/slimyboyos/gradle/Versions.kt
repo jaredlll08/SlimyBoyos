@@ -1,7 +1,7 @@
 package com.blamejared.slimyboyos.gradle
 
 object Versions {
-    const val MOD = "9.0"
+    const val MOD = "10.0"
     const val JAVA = "17"
     const val MINECRAFT = "1.20.4"
     const val FABRIC_LOADER = "0.15.3"
