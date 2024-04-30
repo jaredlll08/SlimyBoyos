@@ -5,7 +5,7 @@ def branchName = "1.20.2";
 pipeline {
     agent any
     tools {
-        jdk "jdk-17.0.1"
+        jdk "jdk-21"
     }
 
     environment {

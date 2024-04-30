@@ -7,7 +7,7 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 plugins {
     id("com.blamejared.slimyboyos.default")
     id("com.blamejared.slimyboyos.loader")
-    id("net.neoforged.gradle.userdev") version ("7.0.81")
+    id("net.neoforged.gradle.userdev") version ("7.0.107")
     id("com.modrinth.minotaur")
 }
 
