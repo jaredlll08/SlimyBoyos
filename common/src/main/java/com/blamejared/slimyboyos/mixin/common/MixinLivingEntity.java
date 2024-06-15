@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -78,9 +79,9 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
     }
     
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
-    public void slimyboyos$dropCustomDeathLoot(DamageSource $$0, CallbackInfo ci) {
+    public void slimyboyos$dropCustomDeathLoot(ServerLevel level, DamageSource $$1, CallbackInfo ci) {
         
-        if(level().isClientSide || !level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+        if(level.isClientSide || !level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
             return;
         }
         ItemStack stack = slimyboyos$getAbsorbedItem();

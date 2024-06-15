@@ -1,4 +1,4 @@
-package com.blamejared.slimyboyos.gradle
+package com.blamejared
 
 object Properties {
     const val GROUP = "com.blamejared.slimyboyos"

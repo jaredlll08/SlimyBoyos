@@ -23,7 +23,7 @@ public class Constants {
     public static final String MOD_NAME = "SlimyBoyos";
     public static final Logger LOG = LogManager.getLogger(MOD_NAME);
     
-     public static final Supplier<TagKey<Item>> SLIMES_CANNOT_ABSORB = Suppliers.memoize(() -> TagKey.create(Registries.ITEM, new ResourceLocation(Constants.MOD_ID, "slimes_cannot_absorb")));
+     public static final Supplier<TagKey<Item>> SLIMES_CANNOT_ABSORB = Suppliers.memoize(() -> TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "slimes_cannot_absorb")));
     
     
 }

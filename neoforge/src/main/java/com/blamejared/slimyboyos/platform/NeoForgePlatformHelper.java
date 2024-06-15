@@ -31,6 +31,6 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public TagKey<EntityType<?>> getSlimeTag() {
         
-        return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("neoforge", "slimes"));
+        return TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("c", "slimes"));
     }
 }
