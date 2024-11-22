@@ -18,6 +18,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,6 +28,10 @@ import java.util.List;
 
 @Mixin(LivingEntity.class)
 public abstract class MixinLivingEntity extends Entity implements IAbsorber {
+    
+    @Shadow
+    public abstract boolean isAlive();
+    
     @Unique
     private static final EntityDataAccessor<ItemStack> DATA_ABSORBED = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.ITEM_STACK);
     @Unique
@@ -47,7 +52,7 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
     @Inject(method = "tick", at = @At("HEAD"))
     public void slimyboyos$tick(CallbackInfo ci) {
         
-        if(this.level().isClientSide || !this.isAlive() || !this.level().getGameRules()
+        if(!(this.level() instanceof ServerLevel sl) || !this.isAlive() || !sl.getGameRules()
                 .getBoolean(GameRules.RULE_MOBGRIEFING)) {
             return;
         }
@@ -81,12 +86,12 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
     public void slimyboyos$dropCustomDeathLoot(ServerLevel level, DamageSource $$1, CallbackInfo ci) {
         
-        if(level.isClientSide || !level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+        if(!(this.level() instanceof ServerLevel sl) || !level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
             return;
         }
         ItemStack stack = slimyboyos$getAbsorbedItem();
         if(!stack.isEmpty()) {
-            spawnAtLocation(stack);
+            spawnAtLocation(sl, stack);
         }
         
     }

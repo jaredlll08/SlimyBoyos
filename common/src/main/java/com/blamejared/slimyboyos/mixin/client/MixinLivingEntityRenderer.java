@@ -1,18 +1,29 @@
 package com.blamejared.slimyboyos.mixin.client;
 
+import com.blamejared.slimyboyos.api.IAbsorber;
+import com.blamejared.slimyboyos.api.IAbsorberRenderState;
 import com.blamejared.slimyboyos.client.SlimeItemLayer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemDisplayContext;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntityRenderer.class)
-public abstract class MixinLivingEntityRenderer<T extends Entity> extends EntityRenderer<T> {
+public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends EntityRenderer<T, S> {
+    
+    @Shadow
+    @Final
+    protected ItemRenderer itemRenderer;
     
     protected MixinLivingEntityRenderer(EntityRendererProvider.Context $$0) {
         
@@ -20,9 +31,19 @@ public abstract class MixinLivingEntityRenderer<T extends Entity> extends Entity
     }
     
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void slimyboyos$init(EntityRendererProvider.Context $$0, EntityModel<? extends Entity> $$1, float $$2, CallbackInfo ci) {
+    public void slimyboyos$init(EntityRendererProvider.Context $$0, EntityModel $$1, float $$2, CallbackInfo ci) {
         
-        ((AccessLivingEntityRenderer) this).slimyboyos$callAddLayer(new SlimeItemLayer<>(((LivingEntityRenderer) (Object) this)));
+        ((AccessLivingEntityRenderer) this).slimyboyos$callAddLayer(new SlimeItemLayer((LivingEntityRenderer) (Object) this, this.itemRenderer));
+    }
+    
+    @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At("HEAD"))
+    public void slimyboyos$extractRenderState(T entity, S state, float $$2, CallbackInfo ci) {
+        
+        if(entity instanceof IAbsorber entAbs && state instanceof IAbsorberRenderState stateAbs) {
+            stateAbs.slimyboyos$setAbsorbedItem(entAbs.slimyboyos$getAbsorbedItem());
+            stateAbs.slimyboyos$setAbsorbedItemModel(this.itemRenderer.resolveItemModel(entAbs.slimyboyos$getAbsorbedItem(), entity, ItemDisplayContext.GROUND));
+            stateAbs.slimyboyos$setId(entity.getId());
+        }
     }
     
 }

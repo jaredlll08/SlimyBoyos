@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-def branchName = "1.21.1";
+def branchName = "1.21.2";
 
 pipeline {
     agent any
