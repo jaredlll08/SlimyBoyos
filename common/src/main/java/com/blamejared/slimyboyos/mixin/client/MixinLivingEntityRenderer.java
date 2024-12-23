@@ -6,9 +6,9 @@ import com.blamejared.slimyboyos.client.SlimeItemLayer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import org.spongepowered.asm.mixin.Final;
@@ -23,7 +23,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
     
     @Shadow
     @Final
-    protected ItemRenderer itemRenderer;
+    protected ItemModelResolver itemModelResolver;
     
     protected MixinLivingEntityRenderer(EntityRendererProvider.Context $$0) {
         
@@ -33,15 +33,14 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
     @Inject(method = "<init>", at = @At("TAIL"))
     public void slimyboyos$init(EntityRendererProvider.Context $$0, EntityModel $$1, float $$2, CallbackInfo ci) {
         
-        ((AccessLivingEntityRenderer) this).slimyboyos$callAddLayer(new SlimeItemLayer((LivingEntityRenderer) (Object) this, this.itemRenderer));
+        ((AccessLivingEntityRenderer) this).slimyboyos$callAddLayer(new SlimeItemLayer((LivingEntityRenderer) (Object) this));
     }
     
     @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At("HEAD"))
     public void slimyboyos$extractRenderState(T entity, S state, float $$2, CallbackInfo ci) {
         
         if(entity instanceof IAbsorber entAbs && state instanceof IAbsorberRenderState stateAbs) {
-            stateAbs.slimyboyos$setAbsorbedItem(entAbs.slimyboyos$getAbsorbedItem());
-            stateAbs.slimyboyos$setAbsorbedItemModel(this.itemRenderer.resolveItemModel(entAbs.slimyboyos$getAbsorbedItem(), entity, ItemDisplayContext.GROUND));
+            this.itemModelResolver.updateForLiving(stateAbs.slimyboyos$getAbsorbedItemState(), entAbs.slimyboyos$getAbsorbedItem(), ItemDisplayContext.GROUND, false, entity);
             stateAbs.slimyboyos$setId(entity.getId());
         }
     }
