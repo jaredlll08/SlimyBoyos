@@ -1,7 +1,5 @@
 #!/usr/bin/env groovy
 
-def branchName = "1.21.2";
-
 pipeline {
     agent any
     tools {
@@ -35,9 +33,6 @@ pipeline {
         stage('Publish') {
             stages {
                 stage('Updating Version') {
-                    when {
-                        branch branchName
-                    }
                     steps {
                         script {
                             if (sh(script: "git log -1 --pretty=%B | fgrep -i -e '[skip deploy]' -e '[skip-deploy]'", returnStatus: true) == 0) {
@@ -52,9 +47,6 @@ pipeline {
                 }
 
                 stage('Deploying to Maven') {
-                    when {
-                        branch branchName
-                    }
                     steps {
                         echo 'Deploying to Maven'
                         sh './gradlew publish'
@@ -62,9 +54,6 @@ pipeline {
                 }
 
                 stage('Deploying to CurseForge') {
-                    when {
-                        branch branchName
-                    }
                     steps {
                         script {
                             if (sh(script: "git log -1 --pretty=%B | fgrep -i -e '[skip deploy]' -e '[skip-deploy]'", returnStatus: true) == 0) {
