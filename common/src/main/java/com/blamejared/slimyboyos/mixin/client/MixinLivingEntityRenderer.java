@@ -40,7 +40,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
     public void slimyboyos$extractRenderState(T entity, S state, float $$2, CallbackInfo ci) {
         
         if(entity instanceof IAbsorber entAbs && state instanceof IAbsorberRenderState stateAbs) {
-            this.itemModelResolver.updateForLiving(stateAbs.slimyboyos$getAbsorbedItemState(), entAbs.slimyboyos$getAbsorbedItem(), ItemDisplayContext.GROUND, false, entity);
+            this.itemModelResolver.updateForLiving(stateAbs.slimyboyos$getAbsorbedItemState(), entAbs.slimyboyos$getAbsorbedItem(), ItemDisplayContext.GROUND, entity);
             stateAbs.slimyboyos$setId(entity.getId());
         }
     }
