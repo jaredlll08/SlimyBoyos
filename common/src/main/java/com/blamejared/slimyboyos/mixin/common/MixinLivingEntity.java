@@ -99,7 +99,9 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     public void slimyboyos$save(CompoundTag tag, CallbackInfo ci) {
         
-        tag.put("slimyboyos:absorbed_item", slimyboyos$getAbsorbedItem().save(this.registryAccess()));
+        if(!slimyboyos$getAbsorbedItem().isEmpty()) {
+            tag.put("slimyboyos:absorbed_item", slimyboyos$getAbsorbedItem().save(this.registryAccess()));
+        }
     }
     
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
