@@ -3,7 +3,6 @@ package com.blamejared.slimyboyos.mixin.common;
 import com.blamejared.slimyboyos.Constants;
 import com.blamejared.slimyboyos.api.IAbsorber;
 import com.blamejared.slimyboyos.platform.Services;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -16,6 +15,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -97,17 +98,17 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
     }
     
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
-    public void slimyboyos$save(CompoundTag tag, CallbackInfo ci) {
+    public void slimyboyos$save(ValueOutput value, CallbackInfo ci) {
         
         if(!slimyboyos$getAbsorbedItem().isEmpty()) {
-            tag.put("slimyboyos:absorbed_item", slimyboyos$getAbsorbedItem().save(this.registryAccess()));
+            value.store("slimyboyos:absorbed_item", ItemStack.CODEC, slimyboyos$getAbsorbedItem());
         }
     }
     
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
-    public void slimyboyos$load(CompoundTag tag, CallbackInfo ci) {
+    public void slimyboyos$load(ValueInput value, CallbackInfo ci) {
         
-        ItemStack.parse(this.registryAccess(), tag.getCompoundOrEmpty("slimyboyos:absorbed_item")).ifPresent(this::slimyboyos$setAbsorbedItem);
+        value.read("slimyboyos:absorbed_item", ItemStack.CODEC).ifPresent(this::slimyboyos$setAbsorbedItem);
     }
     
     @Override
