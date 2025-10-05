@@ -1,15 +1,16 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "com.blamejared.slimyboyos.mixin",
-  "compatibilityLevel": "JAVA_21",
-  "mixins": [
+  "required" : true,
+  "minVersion" : "0.8",
+  "package" : "com.blamejared.slimyboyos.mixin",
+  "compatibilityLevel" : "JAVA_21",
+  "mixins" : [
+    "common.MixinLivingEntityFabric"
   ],
-  "client": [
+  "client" : [
   ],
-  "injectors": {
-    "defaultRequire": 1
+  "injectors" : {
+    "defaultRequire" : 1
   },
-  "refmap": "slimyboyos.refmap.json"
+  "refmap" : "slimyboyos.refmap.json"
 }
   

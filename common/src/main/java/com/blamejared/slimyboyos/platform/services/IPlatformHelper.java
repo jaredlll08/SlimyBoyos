@@ -2,6 +2,8 @@ package com.blamejared.slimyboyos.platform.services;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 public interface IPlatformHelper {
     
@@ -29,5 +31,6 @@ public interface IPlatformHelper {
     boolean isDevelopmentEnvironment();
     
     TagKey<EntityType<?>> getSlimeTag();
+    
     
 }

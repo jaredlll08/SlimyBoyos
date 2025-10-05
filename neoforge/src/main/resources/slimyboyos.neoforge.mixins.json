@@ -1,16 +1,17 @@
 {
-    "required": true,
-    "minVersion": "0.8",
-    "package": "com.blamejared.slimyboyos.mixin",
-    "refmap": "slimyboyos.refmap.json",
-    "compatibilityLevel": "JAVA_21",
-    "mixins": [
-    ],
-    "client": [
-    ],
-    "server": [
-    ],
-    "injectors": {
-        "defaultRequire": 1
-    }
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.blamejared.slimyboyos.mixin",
+  "refmap": "slimyboyos.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "common.MixinLivingEntityNeoForge"
+  ],
+  "client": [
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

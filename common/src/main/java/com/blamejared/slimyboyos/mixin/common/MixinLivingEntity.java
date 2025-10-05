@@ -34,21 +34,12 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
     public abstract boolean isAlive();
     
     @Unique
-    private static final EntityDataAccessor<ItemStack> DATA_ABSORBED = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.ITEM_STACK);
-    @Unique
     public boolean slimyboyos$canAbsorb;
     
     public MixinLivingEntity(EntityType<?> $$0, Level $$1) {
         
         super($$0, $$1);
     }
-    
-    @Inject(method = "defineSynchedData", at = @At(value = "TAIL"))
-    private void slimyboyos$defineSyncedData(SynchedEntityData.Builder builder, CallbackInfo ci) {
-        
-        builder.define(DATA_ABSORBED, ItemStack.EMPTY);
-    }
-    
     
     @Inject(method = "tick", at = @At("HEAD"))
     public void slimyboyos$tick(CallbackInfo ci) {
@@ -97,30 +88,10 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
         
     }
     
-    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
-    public void slimyboyos$save(ValueOutput value, CallbackInfo ci) {
-        
-        if(!slimyboyos$getAbsorbedItem().isEmpty()) {
-            value.store("slimyboyos:absorbed_item", ItemStack.CODEC, slimyboyos$getAbsorbedItem());
-        }
-    }
-    
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
     public void slimyboyos$load(ValueInput value, CallbackInfo ci) {
         
         value.read("slimyboyos:absorbed_item", ItemStack.CODEC).ifPresent(this::slimyboyos$setAbsorbedItem);
-    }
-    
-    @Override
-    public ItemStack slimyboyos$getAbsorbedItem() {
-        
-        return this.entityData.get(DATA_ABSORBED);
-    }
-    
-    @Override
-    public void slimyboyos$setAbsorbedItem(ItemStack stack) {
-        
-        this.entityData.set(DATA_ABSORBED, stack);
     }
     
 }

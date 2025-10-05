@@ -3,7 +3,7 @@ package com.blamejared.slimyboyos.client;
 import com.blamejared.slimyboyos.api.IAbsorberRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.SlimeModel;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
@@ -20,7 +20,7 @@ public class SlimeItemLayer extends RenderLayer<LivingEntityRenderState, SlimeMo
     }
     
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int i, LivingEntityRenderState state, float yRot, float xRot) {
+    public void submit(PoseStack poseStack, SubmitNodeCollector collector, int i, LivingEntityRenderState state, float yRot, float xRot) {
         
         if(!state.isInvisible && state instanceof IAbsorberRenderState abs) {
             ItemStackRenderState itemState = abs.slimyboyos$getAbsorbedItemState();
@@ -34,12 +34,11 @@ public class SlimeItemLayer extends RenderLayer<LivingEntityRenderState, SlimeMo
             poseStack.translate(0, -(4 * 0.0626), 0);
             poseStack.translate(0, 0, -0.0626 / 4);
             poseStack.mulPose(new Quaternionf().rotateY(Mth.PI / 2f));
-            itemState.render(poseStack, multiBufferSource, i, OverlayTexture.NO_OVERLAY);
+            itemState.submit(poseStack, collector, i, OverlayTexture.NO_OVERLAY, state.outlineColor);
             
             poseStack.popPose();
             
         }
     }
-    
     
 }
