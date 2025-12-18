@@ -3,9 +3,6 @@ package com.blamejared.slimyboyos.mixin.common;
 import com.blamejared.slimyboyos.Constants;
 import com.blamejared.slimyboyos.api.IAbsorber;
 import com.blamejared.slimyboyos.platform.Services;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -13,10 +10,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -45,7 +41,7 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
     public void slimyboyos$tick(CallbackInfo ci) {
         
         if(!(this.level() instanceof ServerLevel sl) || !this.isAlive() || !sl.getGameRules()
-                .getBoolean(GameRules.RULE_MOBGRIEFING)) {
+                .get(GameRules.MOB_GRIEFING)) {
             return;
         }
         if(this.tickCount % 20 == 0) {
@@ -78,7 +74,7 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
     public void slimyboyos$dropCustomDeathLoot(ServerLevel level, DamageSource $$1, CallbackInfo ci) {
         
-        if(!(this.level() instanceof ServerLevel sl) || !level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+        if(!(this.level() instanceof ServerLevel sl) || !level.getGameRules().get(GameRules.MOB_DROPS)) {
             return;
         }
         ItemStack stack = slimyboyos$getAbsorbedItem();

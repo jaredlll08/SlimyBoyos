@@ -2,7 +2,7 @@ package com.blamejared.slimyboyos.platform;
 
 import com.blamejared.slimyboyos.platform.services.IPlatformHelper;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.fml.ModList;
@@ -31,7 +31,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public TagKey<EntityType<?>> getSlimeTag() {
         
-        return TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("c", "slimes"));
+        return TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("c", "slimes"));
     }
     
 }
