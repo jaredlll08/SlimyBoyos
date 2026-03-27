@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "${MODID}",
   "name": "${NAME}",
-  "version": "${version}",
+  "version": "${VERSION}",
   "environment": "*",
   "icon": "icon.png",
   "authors": ["${AUTHOR}"],
@@ -19,7 +19,7 @@
     "fabricloader": ">=${FABRIC_LOADER}",
     "java": ">=${JAVA}",
     "minecraft": "${MINECRAFT}",
-    "fabric": "*"
+    "fabric-api": "*"
   },
   "mixins": [
     "slimyboyos.mixins.json",

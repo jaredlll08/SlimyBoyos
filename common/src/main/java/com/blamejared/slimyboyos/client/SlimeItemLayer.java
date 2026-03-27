@@ -35,7 +35,6 @@ public class SlimeItemLayer extends RenderLayer<LivingEntityRenderState, SlimeMo
             poseStack.translate(0, 0, -0.0626 / 4);
             poseStack.mulPose(new Quaternionf().rotateY(Mth.PI / 2f));
             itemState.submit(poseStack, collector, i, OverlayTexture.NO_OVERLAY, state.outlineColor);
-            
             poseStack.popPose();
             
         }

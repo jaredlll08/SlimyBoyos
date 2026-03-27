@@ -45,7 +45,7 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
             return;
         }
         if(this.tickCount % 20 == 0) {
-            this.slimyboyos$canAbsorb = this.getType().is(Services.PLATFORM.getSlimeTag());
+            this.slimyboyos$canAbsorb = this.is(Services.PLATFORM.getSlimeTag());
         }
         
         if(slimyboyos$canAbsorb) {
