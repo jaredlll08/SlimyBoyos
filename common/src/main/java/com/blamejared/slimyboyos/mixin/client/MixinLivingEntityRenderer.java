@@ -31,7 +31,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
     }
     
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void slimyboyos$init(EntityRendererProvider.Context $$0, EntityModel $$1, float $$2, CallbackInfo ci) {
+    public void slimyboyos$init(EntityRendererProvider.Context context, EntityModel model, float shadow, CallbackInfo ci) {
         
         ((AccessLivingEntityRenderer) this).slimyboyos$callAddLayer(new SlimeItemLayer((LivingEntityRenderer) (Object) this));
     }

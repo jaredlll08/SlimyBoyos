@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -55,7 +56,7 @@ public abstract class MixinLivingEntity extends Entity implements IAbsorber {
             
             AABB boundingBox = this.getBoundingBox();
             List<ItemEntity> entities = this.level()
-                    .getEntities(EntityType.ITEM, boundingBox, item -> item.isAlive() && !item.isPickable() && !item.getItem()
+                    .getEntities(EntityTypes.ITEM, boundingBox, item -> item.isAlive() && !item.isPickable() && !item.getItem()
                             .isEmpty());
             entities.stream()
                     .filter(item -> !item.getItem().is(Constants.SLIMES_CANNOT_ABSORB.get()))
